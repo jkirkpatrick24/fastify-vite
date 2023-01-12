@@ -2,6 +2,7 @@ const { resolveConfig } = require('vite')
 const { fileURLToPath } = require('url')
 const { dirname, join, resolve, exists, stat, read } = require('./ioutils')
 const { createHtmlTemplateFunction } = require('./html')
+const { fileUrl } = require('./fileUtils')
 
 const DefaultConfig = {
   // Whether or not to enable Vite's Dev Server
@@ -162,7 +163,12 @@ async function resolveViteConfig (root, dev) {
       const resolvedConfig = await resolveConfig({
         configFile,
       }, 'serve', dev ? 'development' : 'production')
-      let userConfig = await import(configFile).then(m => m.default)
+
+      const safeFileUrl = process.platform === "win32"
+        ? fileUrl(configFile)
+        : userConfig
+      
+      let userConfig = await import(safeFileUrl).then(m => m.default)
       if (userConfig.default) {
         userConfig = userConfig.default
       }

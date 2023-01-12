@@ -1,20 +1,7 @@
-const { parse, resolve, join, exists } = require('../ioutils')
 const FastifyStatic = require('@fastify/static')
 
-function fileUrl (str) {
-  if (typeof str !== 'string') {
-    throw new Error('Expected a string')
-  }
-
-  let pathName = resolve(str).replace(/\\/g, '/')
-
-  // Windows drive letter must be prefixed with a slash
-  if (pathName[0] !== '/') {
-    pathName = `/${pathName}`
-  }
-
-  return encodeURI(`file://${pathName}`)
-}
+const { parse, resolve, join, exists } = require('../ioutils')
+const { fileUrl } = require('../fileUtils')
 
 async function setup (config) {
   if (!config.bundle) {
